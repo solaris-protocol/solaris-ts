@@ -92,22 +92,23 @@ export interface Reserve {
   config: ReserveConfig;
 }
 
-export interface initReserveParams {
-  liquidityAmount: number | BN;
+export interface InitReserveParams {
+  liquidityAmount: number;
   reserveConfig: ReserveConfig;
   sourceLiquidityPubkey: PublicKey;
   destinationCollateralPubkey: PublicKey;
-  ReservePubkey: PublicKey;
-  ReserveLiquidityMintPubkey: PublicKey;
-  ReserveLiquiditySupplyPubkey: PublicKey;
-  ReserveLiqidityFeeReceiver: PublicKey;
-  ReserveCollateralMintPubkey: PublicKey;
-  ReserveCollateralSupplyPubkey: PublicKey;
-  PythProductPubkey: PublicKey;
-  PythPricePubkey: PublicKey;
-  LendingMarketPubkey: PublicKey;
-  LendingMarketOwnerPubkey: PublicKey;
-  UserTransferAuthorityPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  reserveLiquidityMintPubkey: PublicKey;
+  reserveLiquiditySupplyPubkey: PublicKey;
+  reserveLiquidityFeeReceiverPubkey: PublicKey;
+  reserveCollateralMintPubkey: PublicKey;
+  reserveCollateralSupplyPubkey: PublicKey;
+  pythProductPubkey: PublicKey;
+  pythPricePubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  lendingMarketOwnerPubkey: PublicKey;
+  userTransferAuthorityPubkey: PublicKey;
 }
 
 export const LendingReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(
@@ -115,7 +116,7 @@ export const LendingReserveLayout: typeof BufferLayout.Structure = BufferLayout.
     BufferLayout.u8('version'),
     BufferLayout.struct(
       [Layout.uint64('slot'), BufferLayout.u8('stale')],
-      'last_update'
+      'lastUpdate'
     ),
 
     Layout.publicKey('lendingMarket'),

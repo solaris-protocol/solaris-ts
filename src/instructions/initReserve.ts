@@ -1,8 +1,13 @@
-import { PublicKey, TransactionInstruction } from '@solana/web3.js';
+import {
+  PublicKey,
+  TransactionInstruction,
+  SYSVAR_CLOCK_PUBKEY,
+  SYSVAR_RENT_PUBKEY,
+} from '@solana/web3.js';
 import BN from 'bn.js';
 import * as BufferLayout from 'buffer-layout';
 import * as Layout from '../utils/layouts';
-import { initReserveParams } from '../models/reserve';
+import { InitReserveParams } from '../models/reserve';
 import { LENDING_PROGRAM_ID, TOKEN_PROGRAM_ID } from '../constants';
 import { LendingInstructions } from './lendingInstructions';
 
@@ -31,7 +36,7 @@ import { LendingInstructions } from './lendingInstructions';
 ///   15 `[]` Rent sysvar.
 ///   16 `[]` Token program id.
 export const initReserveInstruction = (
-  params: initReserveParams
+  params: InitReserveParams
 ): TransactionInstruction => {
   const dataLayout = BufferLayout.struct([
     BufferLayout.u8('instruction'),
@@ -70,17 +75,62 @@ export const initReserveInstruction = (
   );
 
   const keys = [
-    { pubkey: from, isSigner: false, isWritable: true },
-    { pubkey: to, isSigner: false, isWritable: true },
-    { pubkey: reserveAccount, isSigner: false, isWritable: true },
-    { pubkey: liquidityMint, isSigner: false, isWritable: false },
-    { pubkey: liquiditySupply, isSigner: false, isWritable: true },
-    { pubkey: collateralMint, isSigner: false, isWritable: true },
-    { pubkey: collateralSupply, isSigner: false, isWritable: true },
-    // NOTE: Why lending market needs to be a signer?
-    { pubkey: lendingMarket, isSigner: true, isWritable: true },
-    { pubkey: lendingMarketAuthority, isSigner: false, isWritable: false },
-    { pubkey: transferAuthority, isSigner: true, isWritable: false },
+    {
+      pubkey: params.sourceLiquidityPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    {
+      pubkey: params.destinationCollateralPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    { pubkey: params.reservePubkey, isSigner: false, isWritable: true },
+    {
+      pubkey: params.reserveLiquidityMintPubkey,
+      isSigner: false,
+      isWritable: false,
+    },
+    {
+      pubkey: params.reserveLiquiditySupplyPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    {
+      pubkey: params.reserveLiquidityFeeReceiverPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    {
+      pubkey: params.pythProductPubkey,
+      isSigner: false,
+      isWritable: false,
+    },
+    {
+      pubkey: params.pythPricePubkey,
+      isSigner: false,
+      isWritable: false,
+    },
+    {
+      pubkey: params.lendingMarketPubkey,
+      isSigner: false,
+      isWritable: false,
+    },
+    {
+      pubkey: params.lendingMarketDerivedAuthorityPubkey,
+      isSigner: false,
+      isWritable: false,
+    },
+    {
+      pubkey: params.lendingMarketOwnerPubkey,
+      isSigner: true,
+      isWritable: false,
+    },
+    {
+      pubkey: params.userTransferAuthorityPubkey,
+      isSigner: true,
+      isWritable: false,
+    },
     { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false },
     { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },

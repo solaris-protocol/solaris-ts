@@ -8,7 +8,7 @@ import { LendingMarketLayout } from '../models';
 
 export const initLendingMarketTransaction = (
   lendingMarketPubKey: PublicKey,
-  quoteTokenMintPubKey: PublicKey,
+  quoteCurrency: string,
   owner: PublicKey,
   balanceNeeded: number
 ): Transaction => {
@@ -25,7 +25,7 @@ export const initLendingMarketTransaction = (
     .add(
       initLendingMarketInstruction(
         lendingMarketPubKey,
-        quoteTokenMintPubKey,
+        quoteCurrency,
         owner
       )
     );

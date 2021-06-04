@@ -102,6 +102,16 @@ export const initReserveInstruction = (
       isWritable: true,
     },
     {
+      pubkey: params.reserveCollateralMintPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    {
+      pubkey: params.reserveCollateralSupplyPubkey,
+      isSigner: false,
+      isWritable: true,
+    },
+    {
       pubkey: params.pythProductPubkey,
       isSigner: false,
       isWritable: false,

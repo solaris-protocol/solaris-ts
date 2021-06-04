@@ -20,26 +20,35 @@ import { LendingInstructions } from './lendingInstructions';
 ///   3. `[]` Token program id.
 export const initLendingMarketInstruction = (
   lendingMarketPubkey: PublicKey,
-  quoteTokenMintPubkey: PublicKey,
+  quoteCurrency: string = 'USD',
   owner: PublicKey
 ): TransactionInstruction => {
   const dataLayout = BufferLayout.struct([
     BufferLayout.u8('instruction'),
     Layouts.publicKey('owner'),
+    BufferLayout.blob(32, 'quote_currency'),
   ]);
+
+  const quote_currency =
+    quoteCurrency === 'USD'
+      ? Buffer.from(
+          'USD\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0'
+        )
+      : Buffer.from(quoteCurrency);
 
   const data = Buffer.alloc(dataLayout.span);
   dataLayout.encode(
     {
       instruction: LendingInstructions.InitLendingMarket,
       owner,
+      quote_currency: quote_currency,
     },
     data
   );
 
   const keys = [
     { pubkey: lendingMarketPubkey, isSigner: false, isWritable: true },
-    { pubkey: quoteTokenMintPubkey, isSigner: false, isWritable: false },
+    // { pubkey: quoteTokenMintPubkey, isSigner: false, isWritable: false },
     { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
   ];

@@ -18,7 +18,7 @@ export const LendingMarketLayout: typeof BufferLayout.Structure = BufferLayout.s
 export interface LendingMarket {
   version: number;
   bumpSeed: number;
-  quoteTokenMint: PublicKey;
+  quoteCurrency: string;
   tokenProgramId: PublicKey;
   owner: PublicKey;
 }

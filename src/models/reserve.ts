@@ -111,7 +111,7 @@ export interface InitReserveParams {
   userTransferAuthorityPubkey: PublicKey;
 }
 
-export const LendingReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(
+export const ReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(
   [
     BufferLayout.u8('version'),
     BufferLayout.struct(
@@ -128,7 +128,6 @@ export const LendingReserveLayout: typeof BufferLayout.Structure = BufferLayout.
         Layout.publicKey('supplyPubkey'),
         Layout.publicKey('feeReceiver'),
         Layout.publicKey('oraclePubkey'),
-        Layout.uint64('availableAmount'),
         Layout.uint64('availableAmount'),
         Layout.uint128('borrowedAmountWads'),
         Layout.uint128('cumulativeBorrowRateWads'),
@@ -167,5 +166,7 @@ export const LendingReserveLayout: typeof BufferLayout.Structure = BufferLayout.
       ],
       'config'
     ),
+    // extra space for future contract changes
+    BufferLayout.blob(248, 'padding'),
   ]
 );

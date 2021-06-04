@@ -34,13 +34,16 @@ export const uint64 = (property = 'uint64'): unknown => {
 
   layout.decode = (buffer: Buffer, offset: number) => {
     const data = _decode(buffer, offset);
-    return new BN(
-      [...data]
-        .reverse()
-        .map(i => `00${i.toString(16)}`.slice(-2))
-        .join(''),
-      16
-    );
+
+    return new BN(Buffer.from(data), 'hex', 'le');
+
+    // return new BN(
+    //   [...data]
+    //     .reverse()
+    //     .map(i => `00${i.toString(16)}`.slice(-2))
+    //     .join(''),
+    //   16
+    // );
   };
 
   layout.encode = (num: BN, buffer: Buffer, offset: number) => {
@@ -65,13 +68,15 @@ export const uint128 = (property = 'uint128'): unknown => {
 
   layout.decode = (buffer: Buffer, offset: number) => {
     const data = _decode(buffer, offset);
-    return new BN(
-      [...data]
-        .reverse()
-        .map(i => `00${i.toString(16)}`.slice(-2))
-        .join(''),
-      16
-    );
+
+    return new BN(Buffer.from(data), 'hex', 'le');
+    // return new BN(
+    //   [...data]
+    //     .reverse()
+    //     .map(i => `00${i.toString(16)}`.slice(-2))
+    //     .join(''),
+    //   16
+    // );
   };
 
   layout.encode = (num: BN, buffer: Buffer, offset: number) => {

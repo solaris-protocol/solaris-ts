@@ -116,7 +116,7 @@ export const ReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(
     BufferLayout.u8('version'),
     BufferLayout.struct(
       [Layout.uint64('slot'), BufferLayout.u8('stale')],
-      'lastUpdate'
+      'last_update'
     ),
 
     Layout.publicKey('lendingMarket'),
@@ -170,3 +170,18 @@ export const ReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(
     BufferLayout.blob(248, 'padding'),
   ]
 );
+
+export const ReserveParser = (pubKey: PublicKey, info: AccountInfo<Buffer>) => {
+  const buffer = Buffer.from(info.data);
+  const data = ReserveLayout.decode(buffer) as Reserve;
+
+  const details = {
+    pubkey: pubKey,
+    account: {
+      ...info,
+    },
+    info: data,
+  };
+
+  return details;
+};

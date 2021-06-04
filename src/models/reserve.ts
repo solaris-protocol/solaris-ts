@@ -83,7 +83,7 @@ export interface Reserve {
   /// Last slot when supply and rates updated
   last_update: LastUpdate;
   /// Lending market address
-  lending_market: PublicKey;
+  lendingMarket: PublicKey;
   /// Reserve liquidity
   liquidity: ReserveLiquidity;
   /// Reserve collateral
@@ -109,6 +109,32 @@ export interface InitReserveParams {
   lendingMarketDerivedAuthorityPubkey: PublicKey;
   lendingMarketOwnerPubkey: PublicKey;
   userTransferAuthorityPubkey: PublicKey;
+}
+
+export interface depositReserveLiquidityParams {
+  liquidityAmount: number;
+  sourceLiquidityPubkey: PublicKey;
+  destinationCollateralPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  reserveLiquiditySupplyPubkey: PublicKey;
+  reserveCollateralMintPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  userTransferAuthorityPubkey: PublicKey;
+  pythPricePubkey: PublicKey;
+}
+
+export interface redeemReserveCollateralParams {
+  collateralAmount: number;
+  sourceCollateralPubkey: PublicKey;
+  destinationLiquidityPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  reserveCollateralMintPubkey: PublicKey;
+  reserveLiquiditySupplyPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  userTransferAuthorityPubkey: PublicKey;
+  pythPricePubkey: PublicKey;
 }
 
 export const ReserveLayout: typeof BufferLayout.Structure = BufferLayout.struct(

@@ -21,10 +21,7 @@ export async function refreshReserveCommand(
     throw 'Error: cannot find the reserve account';
   }
 
-  const reserve = ReserveLayout.decode(Buffer.from(reserveAccountInfo.data));
   const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
-
-  console.log(reserveParsed.info.liquidity.oraclePubkey.toBase58());
 
   const newRefreshReserveTransaction = refreshReserveTransaction(
     reservePubkey,

@@ -1,4 +1,4 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey, Keypair } from '@solana/web3.js';
 
 import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
@@ -9,7 +9,11 @@ import {
   initLendingMarketCommand,
   initReserveCommand,
   refreshReserveCommand,
+  depositReserveLiquidityCommand,
+  redeemReserveCollateralCommand,
 } from './commands';
+
+import { ReserveParser } from './models';
 
 function getRpcUrl(): string {
   return 'https://api.devnet.solana.com';
@@ -23,6 +27,8 @@ function getConnection(): Connection {
 async function run() {
   //create payer account
   const payer = getPayer();
+  //create user transfer authority account
+  const userTransferAuthorityKeypair = Keypair.generate();
 
   //get connection
   const connection = getConnection();
@@ -86,9 +92,71 @@ async function run() {
 
   // Refresh reserve
 
-  await refreshReserveCommand(
+  // await refreshReserveCommand(
+  //   connection,
+  //   new PublicKey('Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'),
+  //   payer
+  // );
+
+  // Deposit to reserve
+  const reservePubkey = new PublicKey(
+    'Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'
+  );
+
+  const depositAmount = 1000000;
+
+  //create source liquidity user account
+  const sourceLiquidityPubkey = await Token.createWrappedNativeAccount(
     connection,
-    new PublicKey('Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'),
+    TOKEN_PROGRAM_ID,
+    payer.publicKey,
+    payer,
+    depositAmount
+  );
+
+  //create destination collateral user account
+  const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
+
+  if (reserveAccountInfo === null) {
+    throw 'Error: cannot find the reserve account';
+  }
+
+  const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
+
+  const reserveCollateralMintPubkey = reserveParsed.info.collateral.mintPubkey;
+
+  const collateralToken = new Token(
+    connection,
+    reserveCollateralMintPubkey,
+    TOKEN_PROGRAM_ID,
+    payer
+  );
+
+  const destinationCollateralPubkey = await collateralToken.createAccount(
+    payer.publicKey
+  );
+
+  await depositReserveLiquidityCommand(
+    connection,
+    depositAmount,
+    sourceLiquidityPubkey,
+    destinationCollateralPubkey,
+    reservePubkey,
+    userTransferAuthorityKeypair,
+    payer
+  );
+
+  //redeem collateral from a reserve
+
+  const collateralAmount = 1000000;
+
+  await redeemReserveCollateralCommand(
+    connection,
+    collateralAmount,
+    destinationCollateralPubkey,
+    sourceLiquidityPubkey,
+    reservePubkey,
+    userTransferAuthorityKeypair,
     payer
   );
 }

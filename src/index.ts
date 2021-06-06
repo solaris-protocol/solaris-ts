@@ -11,9 +11,12 @@ import {
   refreshReserveCommand,
   depositReserveLiquidityCommand,
   redeemReserveCollateralCommand,
+  refreshObligationCommand,
 } from './commands';
 
 import { ReserveParser } from './models';
+import { initObligationCommand } from './commands/initObligation';
+import BN from 'bn.js';
 
 function getRpcUrl(): string {
   return 'https://api.devnet.solana.com';
@@ -98,67 +101,86 @@ async function run() {
   //   payer
   // );
 
-  // Deposit to reserve
-  const reservePubkey = new PublicKey(
-    'Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'
+  // // Deposit to reserve
+  // const reservePubkey = new PublicKey(
+  //   'Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'
+  // );
+
+  // const depositAmount = 1000000;
+
+  // //create source liquidity user account
+  // const sourceLiquidityPubkey = await Token.createWrappedNativeAccount(
+  //   connection,
+  //   TOKEN_PROGRAM_ID,
+  //   payer.publicKey,
+  //   payer,
+  //   depositAmount
+  // );
+
+  // //create destination collateral user account
+  // const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
+
+  // if (reserveAccountInfo === null) {
+  //   throw 'Error: cannot find the reserve account';
+  // }
+
+  // const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
+
+  // const reserveCollateralMintPubkey = reserveParsed.info.collateral.mintPubkey;
+
+  // const collateralToken = new Token(
+  //   connection,
+  //   reserveCollateralMintPubkey,
+  //   TOKEN_PROGRAM_ID,
+  //   payer
+  // );
+
+  // const destinationCollateralPubkey = await collateralToken.createAccount(
+  //   payer.publicKey
+  // );
+
+  // await depositReserveLiquidityCommand(
+  //   connection,
+  //   depositAmount,
+  //   sourceLiquidityPubkey,
+  //   destinationCollateralPubkey,
+  //   reservePubkey,
+  //   userTransferAuthorityKeypair,
+  //   payer
+  // );
+
+  // // redeem collateral from a reserve
+
+  // const collateralAmount = 1000000;
+
+  // await redeemReserveCollateralCommand(
+  //   connection,
+  //   collateralAmount,
+  //   destinationCollateralPubkey,
+  //   sourceLiquidityPubkey,
+  //   reservePubkey,
+  //   userTransferAuthorityKeypair,
+  //   payer
+  // );
+
+  // init Obligation
+  // const lendingMarketPubkey = new PublicKey(
+  //   '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h'
+  // );
+  // const newObligation = await initObligationCommand(
+  //   connection,
+  //   lendingMarketPubkey,
+  //   payer
+  // );
+  //G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81
+  // console.log('###: newObligation', newObligation.to);
+
+  //Refresh obligation
+  const obligationPubkey = new PublicKey(
+    'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
   );
 
-  const depositAmount = 1000000;
-
-  //create source liquidity user account
-  const sourceLiquidityPubkey = await Token.createWrappedNativeAccount(
-    connection,
-    TOKEN_PROGRAM_ID,
-    payer.publicKey,
-    payer,
-    depositAmount
-  );
-
-  //create destination collateral user account
-  const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
-
-  if (reserveAccountInfo === null) {
-    throw 'Error: cannot find the reserve account';
-  }
-
-  const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
-
-  const reserveCollateralMintPubkey = reserveParsed.info.collateral.mintPubkey;
-
-  const collateralToken = new Token(
-    connection,
-    reserveCollateralMintPubkey,
-    TOKEN_PROGRAM_ID,
-    payer
-  );
-
-  const destinationCollateralPubkey = await collateralToken.createAccount(
-    payer.publicKey
-  );
-
-  await depositReserveLiquidityCommand(
-    connection,
-    depositAmount,
-    sourceLiquidityPubkey,
-    destinationCollateralPubkey,
-    reservePubkey,
-    userTransferAuthorityKeypair,
-    payer
-  );
-
-  //redeem collateral from a reserve
-
-  const collateralAmount = 1000000;
-
-  await redeemReserveCollateralCommand(
-    connection,
-    collateralAmount,
-    destinationCollateralPubkey,
-    sourceLiquidityPubkey,
-    reservePubkey,
-    userTransferAuthorityKeypair,
-    payer
-  );
+  await refreshObligationCommand(connection, obligationPubkey, payer);
 }
 
 run();

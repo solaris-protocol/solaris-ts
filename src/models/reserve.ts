@@ -2,6 +2,7 @@ import { AccountInfo, PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import * as BufferLayout from 'buffer-layout';
 import * as Layout from '../utils/layouts';
+import { LastUpdate } from './lastUpdate';
 
 type Decimal = BN;
 
@@ -18,14 +19,6 @@ export interface ReserveFees {
   /// Amount of fee going to host account
   hostFeePercentage: number;
 }
-
-export interface LastUpdate {
-  /// Last slot when updated
-  slot: BN;
-  /// True when marked stale, false when slot updated
-  stale: Boolean;
-}
-
 export interface ReserveConfig {
   /// Optimal utilization rate, as a percentage
   optimalUtilizationRate: number;
@@ -90,6 +83,13 @@ export interface Reserve {
   collateral: ReserveCollateral;
   /// Reserve configuration values
   config: ReserveConfig;
+  // optional
+  pubkey?: PublicKey;
+}
+
+export interface ReserveAndOracleInfo {
+  reservePubkey: PublicKey;
+  oraclePubkey: PublicKey;
 }
 
 export interface InitReserveParams {

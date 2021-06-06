@@ -1,4 +1,4 @@
-import { Transaction, PublicKey, SystemProgram } from '@solana/web3.js';
+import { Transaction, PublicKey } from '@solana/web3.js';
 
 import { refreshReserveInstruction } from '../instructions';
 

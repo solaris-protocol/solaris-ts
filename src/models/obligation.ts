@@ -78,6 +78,19 @@ export interface InitObligationParams {
   obligationOwnerPubkey: PublicKey;
 }
 
+export interface depositObligatonCollateralParams {
+  collateralAmount: number;
+  sourceCollateralPubkey: PublicKey;
+  destinationReserveCollateralPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  obligationPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  obligationOwnerPubkey: PublicKey;
+  userTransferAuthorityPubkey: PublicKey;
+  pythPricePubkey: PublicKey;
+}
+
 export const MAX_OBLIGATION_RESERVES = 10;
 export const OBLIGATION_COLLATERAL_LEN = 56; // 32 + 8 + 16
 export const OBLIGATION_LIQUIDITY_LEN = 80; // 32 + 16 + 16 + 16

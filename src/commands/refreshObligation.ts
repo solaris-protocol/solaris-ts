@@ -46,16 +46,16 @@ export async function refreshObligationCommand(
   );
 
   const borrowsReservesParsed = await Promise.all(
-    depositsReserves.map(async reserve => {
+    borrowsReserves.map(async reserve => {
       const reserveAccountInfo = await connection.getAccountInfo(
-        reserve.depositReserve
+        reserve.borrowReserve
       );
 
       if (reserveAccountInfo === null) {
         throw 'Error: cannot find the reserve account from obligation deposits';
       }
 
-      return ReserveParser(reserve.depositReserve, reserveAccountInfo);
+      return ReserveParser(reserve.borrowReserve, reserveAccountInfo);
     })
   );
 
@@ -71,7 +71,6 @@ export async function refreshObligationCommand(
     })
   );
 
-  console.log(depositsReservesParsed);
   const newRefreshObligationTransaction = refreshObligationTransaction(
     obligationPubkey,
     depositsReservesAndOraclesInfos,

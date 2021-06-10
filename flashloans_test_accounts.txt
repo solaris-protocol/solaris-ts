@@ -1,0 +1,17 @@
+	const sourceLiquidityPubkey = 'C7PhDXuS9H6a5GfdUrEsakmVWokXRv6jfbRDiAPpVEtE';
+
+	const reservePubkey = 'Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ';
+  
+	const lendingMarketPubkey = '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h';
+
+
+  const lendingMarketDerivedAuthorityPubkey =
+    '4B3rs3z48eW1iw3JNTrQZsTJnCqEbFMuGVk3TVMAtQeM';
+
+  const flashLoanFeeReceiverPubkey =
+    'ESApvknZkcGwee2rhjL7yGKyabtdCvDJ28US8VhsWutw';
+
+  const flashLoanFeeReceiverMintPubkey =
+    'So11111111111111111111111111111111111111112';
+
+  const hostFeeReceiverPubkey = '6oLtsmgq3kMTJs11eM4rpdcQjyMAXw84VvTUAi2XHnqu';

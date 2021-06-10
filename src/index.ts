@@ -1,10 +1,14 @@
-import { Connection, PublicKey, Keypair } from '@solana/web3.js';
+import { Connection, PublicKey, Keypair, AccountInfo } from '@solana/web3.js';
 
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { Token, TOKEN_PROGRAM_ID, AccountLayout } from '@solana/spl-token';
 
 import { getPayer } from './accounts';
 
-import { RESERVE_CONFIG_DEFAULTS, WRAPPED_SOL_MINT } from './constants';
+import {
+  RESERVE_CONFIG_DEFAULTS,
+  WRAPPED_SOL_MINT,
+  LENDING_PROGRAM_ID,
+} from './constants';
 import {
   initLendingMarketCommand,
   initReserveCommand,
@@ -12,7 +16,11 @@ import {
   depositReserveLiquidityCommand,
   redeemReserveCollateralCommand,
   refreshObligationCommand,
+  depositObligationCollateralCommand,
 } from './commands';
+
+import * as BufferLayout from 'buffer-layout';
+import * as Layout from './utils/layouts';
 
 import { ReserveParser } from './models';
 import { initObligationCommand } from './commands/initObligation';
@@ -173,14 +181,62 @@ async function run() {
   //   payer
   // );
   //G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81
-  // console.log('###: newObligation', newObligation.to);
+  // console.log('###: newObligation', newObligation.toBase58());
 
   //Refresh obligation
+  // const obligationPubkey = new PublicKey(
+  //   'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
+  // );
+
+  // await refreshObligationCommand(connection, obligationPubkey, payer);
+
+  //deposit obligation collateral
+  const reservePubkey = new PublicKey(
+    'Bfs6BTc2t6Epb9hjGpLpQcSmQ1ZycKsEv6mV3QuV3VzZ'
+  );
+
+  const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
+
+  if (reserveAccountInfo === null) {
+    throw 'Error: cannot find the reserve account';
+  }
+
+  const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
+
+  const collateralAmount = 100;
+
   const obligationPubkey = new PublicKey(
     'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
   );
 
-  await refreshObligationCommand(connection, obligationPubkey, payer);
+  const lendingMarketPubkey = new PublicKey(
+    '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h'
+  );
+
+  const payerCollateralTokenAccounts = await connection.getTokenAccountsByOwner(
+    payer.publicKey,
+    { mint: reserveParsed.info.collateral.mintPubkey }
+  );
+
+  const payerCollateralTokenAccountPubkey =
+    payerCollateralTokenAccounts.value.find(
+      item =>
+        new BN(AccountLayout.decode(item.account.data).amount).cmp(
+          new BN('0')
+        ) === 1
+    )?.pubkey || payer.publicKey;
+
+  console.log(payerCollateralTokenAccountPubkey.toBase58());
+
+  await depositObligationCollateralCommand(
+    connection,
+    collateralAmount,
+    payerCollateralTokenAccountPubkey,
+    reservePubkey,
+    obligationPubkey,
+    userTransferAuthorityKeypair,
+    payer
+  );
 }
 
 run();

@@ -91,6 +91,17 @@ export interface depositObligatonCollateralParams {
   pythPricePubkey: PublicKey;
 }
 
+export interface withdrawObligationCollateraParams {
+  collateralAmount: number;
+  sourceReserveCollateralPubkey: PublicKey;
+  destinationCollateralPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  obligationPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  obligationOwnerPubkey: PublicKey;
+}
+
 export const MAX_OBLIGATION_RESERVES = 10;
 export const OBLIGATION_COLLATERAL_LEN = 56; // 32 + 8 + 16
 export const OBLIGATION_LIQUIDITY_LEN = 80; // 32 + 16 + 16 + 16

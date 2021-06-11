@@ -36,7 +36,7 @@ export const withdrawObligationCollateralInstruction = (
   const data = Buffer.alloc(dataLayout.span);
   dataLayout.encode(
     {
-      instruction: LendingInstructions.RedeemReserveCollateral,
+      instruction: LendingInstructions.WithdrawObligationCollateral,
       collateralAmount: new BN(params.collateralAmount),
     },
     data

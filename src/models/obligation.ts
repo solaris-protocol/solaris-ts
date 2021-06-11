@@ -96,7 +96,7 @@ export interface withdrawObligationCollateraParams {
   sourceReserveCollateralPubkey: PublicKey;
   destinationCollateralPubkey: PublicKey;
   reservePubkey: PublicKey;
-	obligationPubkey: PublicKey;
+  obligationPubkey: PublicKey;
   lendingMarketPubkey: PublicKey;
   lendingMarketDerivedAuthorityPubkey: PublicKey;
   obligationOwnerPubkey: PublicKey;
@@ -192,7 +192,7 @@ export const ObligationParser = (
       OBLIGATION_LIQUIDITY_LEN * (MAX_OBLIGATION_RESERVES - 1));
   const obligationHeadBuffer = buffer.slice(0, obligationHeadLength);
   const obligationDepositsBorrowsInfoBuffer = buffer.slice(
-    obligationHeadLength + 1
+    obligationHeadLength
   );
 
   const obligationHeadData = ObligationHeadLayout.decode(

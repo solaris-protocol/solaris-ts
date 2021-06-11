@@ -12,30 +12,28 @@ import {
 import { ReserveAndOraclePubkeys } from '../models';
 
 export const refreshObligationTransaction = (
-         obligationPubkey: PublicKey,
-         obligationReservesAndOraclesPubkeys: Array<ReserveAndOraclePubkeys>
-       ): Transaction => {
-        
+  obligationPubkey: PublicKey,
+  obligationReservesAndOraclesPubkeys: Array<ReserveAndOraclePubkeys>
+): Transaction => {
+  const reserveRefreshInstructions: Array<TransactionInstruction> = obligationReservesAndOraclesPubkeys.map(
+    reserveAndOraclePubkeys =>
+      refreshReserveInstruction(
+        reserveAndOraclePubkeys.reservePubkey,
+        reserveAndOraclePubkeys.oraclePubkey
+      )
+  );
 
-         const reserveRefreshInstructions: Array<TransactionInstruction> = obligationReservesAndOraclesPubkeys.map(
-           reserveAndOraclePubkeys =>
-             refreshReserveInstruction(
-               reserveAndOraclePubkeys.reservePubkey,
-               reserveAndOraclePubkeys.oraclePubkey
-             )
-         );
+  const newRefreshObligationInstruction = refreshObligationInstruction(
+    obligationPubkey,
+    obligationReservesAndOraclesPubkeys.map(
+      reserveAndOraclePubkeys => reserveAndOraclePubkeys.reservePubkey
+    )
+  );
 
-         const newRefreshObligationInstruction = refreshObligationInstruction(
-           obligationPubkey,
-           obligationReservesAndOraclesPubkeys.map(
-             reserveAndOraclePubkeys => reserveAndOraclePubkeys.reservePubkey
-           )
-         );
+  const obligationRefreshInstructions: Array<TransactionInstruction> = [
+    ...reserveRefreshInstructions,
+    newRefreshObligationInstruction,
+  ];
 
-         const obligationRefreshInstructions: Array<TransactionInstruction> = [
-           ...reserveRefreshInstructions,
-           newRefreshObligationInstruction,
-         ];
-
-         return new Transaction().add(...obligationRefreshInstructions);
-       };
+  return new Transaction().add(...obligationRefreshInstructions);
+};

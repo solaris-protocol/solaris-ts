@@ -59,22 +59,28 @@ export async function refreshObligationCommand(
     })
   );
 
-  const borrowsReservesAndOraclesInfos = borrowsReservesParsed.map(reserve => ({
-    reservePubkey: reserve.pubkey,
-    oraclePubkey: reserve.info.liquidity.oraclePubkey,
-  }));
-
-  const depositsReservesAndOraclesInfos = depositsReservesParsed.map(
+  const borrowsReservesAndOraclesPubkeys = borrowsReservesParsed.map(
     reserve => ({
       reservePubkey: reserve.pubkey,
       oraclePubkey: reserve.info.liquidity.oraclePubkey,
     })
   );
 
+  const depositsReservesAndOraclesPubkeys = depositsReservesParsed.map(
+    reserve => ({
+      reservePubkey: reserve.pubkey,
+      oraclePubkey: reserve.info.liquidity.oraclePubkey,
+    })
+  );
+
+  const obligationReservesAndOraclesPubkeys = [
+    ...depositsReservesAndOraclesPubkeys,
+    ...borrowsReservesAndOraclesPubkeys,
+  ];
+
   const newRefreshObligationTransaction = refreshObligationTransaction(
     obligationPubkey,
-    depositsReservesAndOraclesInfos,
-    borrowsReservesAndOraclesInfos
+    obligationReservesAndOraclesPubkeys
   );
 
   await sendAndConfirmTransaction(

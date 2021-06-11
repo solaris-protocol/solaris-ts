@@ -96,7 +96,7 @@ export interface withdrawObligationCollateraParams {
   sourceReserveCollateralPubkey: PublicKey;
   destinationCollateralPubkey: PublicKey;
   reservePubkey: PublicKey;
-  obligationPubkey: PublicKey;
+	obligationPubkey: PublicKey;
   lendingMarketPubkey: PublicKey;
   lendingMarketDerivedAuthorityPubkey: PublicKey;
   obligationOwnerPubkey: PublicKey;

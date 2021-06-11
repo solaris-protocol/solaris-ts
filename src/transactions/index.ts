@@ -7,3 +7,4 @@ export * from './redeemReserveCollateral';
 export * from './initObligation';
 export * from './refreshObligation';
 export * from './depositObligationCollateral';
+export * from './withdrawObligationCollateral';

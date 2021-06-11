@@ -2,28 +2,30 @@ import { Transaction, PublicKey } from '@solana/web3.js';
 import { Token } from '@solana/spl-token';
 import { TOKEN_PROGRAM_ID } from '../constants';
 import {
-  redeemReserveCollateralInstruction,
+  withdrawObligationCollateralInstruction,
   refreshReserveInstruction,
+  refreshObligationInstruction,
 } from '../instructions';
-import { withdrawObligationCollateraParams } from '../models';
+import {
+  withdrawObligationCollateraParams,
+  ReserveAndOraclePubkeys,
+} from '../models';
 
 export const withdrawObligationCollateralTransaction = (
   params: withdrawObligationCollateraParams,
-  payerPubkey: PublicKey
+  obligationReservesAndOraclesPubkeys: Array<ReserveAndOraclePubkeys>
 ): Transaction => {
   return new Transaction()
     .add(
-      Token.createApproveInstruction(
-        TOKEN_PROGRAM_ID,
-        params.sourceCollateralPubkey,
-        params.userTransferAuthorityPubkey,
-        payerPubkey,
-        [],
-        params.collateralAmount
+      ...obligationReservesAndOraclesPubkeys.map(item =>
+        refreshReserveInstruction(item.reservePubkey, item.oraclePubkey)
       )
     )
     .add(
-      refreshReserveInstruction(params.reservePubkey, params.pythPricePubkey)
+      refreshObligationInstruction(
+        params.obligationPubkey,
+        obligationReservesAndOraclesPubkeys.map(item => item.reservePubkey)
+      )
     )
-    .add(redeemReserveCollateralInstruction(params));
+    .add(withdrawObligationCollateralInstruction(params));
 };

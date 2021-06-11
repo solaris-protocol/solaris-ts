@@ -87,7 +87,7 @@ export interface Reserve {
   pubkey?: PublicKey;
 }
 
-export interface ReserveAndOracleInfo {
+export interface ReserveAndOraclePubkeys {
   reservePubkey: PublicKey;
   oraclePubkey: PublicKey;
 }

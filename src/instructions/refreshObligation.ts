@@ -21,8 +21,7 @@ import { LENDING_PROGRAM_ID } from '../constants';
 ///   .. `[]` Liquidity borrow reserve accounts - refreshed, all, in order.
 export const refreshObligationInstruction = (
   obligationPubkey: PublicKey,
-  depositsReserves: Array<PublicKey>,
-  borrowsReserves: Array<PublicKey>
+  obligationReserves: Array<PublicKey>,
 ): TransactionInstruction => {
   const dataLayout = BufferLayout.u8('instruction');
 
@@ -32,7 +31,7 @@ export const refreshObligationInstruction = (
   const keys = [
     { pubkey: obligationPubkey, isSigner: false, isWritable: true },
     { pubkey: SYSVAR_CLOCK_PUBKEY, isSigner: false, isWritable: false },
-    ...[...depositsReserves, ...borrowsReserves].map(reservePubkey => ({
+    ...obligationReserves.map(reservePubkey => ({
       pubkey: reservePubkey,
       isSigner: false,
       isWritable: false,

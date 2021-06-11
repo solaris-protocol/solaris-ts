@@ -9,40 +9,33 @@ import {
   refreshObligationInstruction,
 } from '../instructions';
 
-import { ReserveAndOracleInfo } from '../models';
+import { ReserveAndOraclePubkeys } from '../models';
 
 export const refreshObligationTransaction = (
-  obligationPubkey: PublicKey,
-  depositsReservesAndOraclesInfos: Array<ReserveAndOracleInfo>,
-  borrowsReservesAndOraclesInfos: Array<ReserveAndOracleInfo>
-): Transaction => {
-  const reservesToRefreshInfos = [
-    ...depositsReservesAndOraclesInfos,
-    ...borrowsReservesAndOraclesInfos,
-  ];
+         obligationPubkey: PublicKey,
+         obligationReservesAndOraclesPubkeys: Array<ReserveAndOraclePubkeys>
+       ): Transaction => {
+        
 
-  const reserveRefreshInstructions: Array<TransactionInstruction> = reservesToRefreshInfos.map(
-    reserveAndOracleInfo =>
-      refreshReserveInstruction(
-        reserveAndOracleInfo.reservePubkey,
-        reserveAndOracleInfo.oraclePubkey
-      )
-  );
+         const reserveRefreshInstructions: Array<TransactionInstruction> = obligationReservesAndOraclesPubkeys.map(
+           reserveAndOraclePubkeys =>
+             refreshReserveInstruction(
+               reserveAndOraclePubkeys.reservePubkey,
+               reserveAndOraclePubkeys.oraclePubkey
+             )
+         );
 
-  const newRefreshObligationInstruction = refreshObligationInstruction(
-    obligationPubkey,
-    depositsReservesAndOraclesInfos.map(
-      reserveAndOracleInfo => reserveAndOracleInfo.reservePubkey
-    ),
-    borrowsReservesAndOraclesInfos.map(
-      reserveAndOracleInfo => reserveAndOracleInfo.reservePubkey
-    )
-  );
+         const newRefreshObligationInstruction = refreshObligationInstruction(
+           obligationPubkey,
+           obligationReservesAndOraclesPubkeys.map(
+             reserveAndOraclePubkeys => reserveAndOraclePubkeys.reservePubkey
+           )
+         );
 
-  const obligationRefreshInstructions: Array<TransactionInstruction> = [
-    ...reserveRefreshInstructions,
-    newRefreshObligationInstruction,
-  ];
+         const obligationRefreshInstructions: Array<TransactionInstruction> = [
+           ...reserveRefreshInstructions,
+           newRefreshObligationInstruction,
+         ];
 
-  return new Transaction().add(...obligationRefreshInstructions);
-};
+         return new Transaction().add(...obligationRefreshInstructions);
+       };

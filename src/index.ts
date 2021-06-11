@@ -209,10 +209,6 @@ async function run() {
     'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
   );
 
-  const lendingMarketPubkey = new PublicKey(
-    '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h'
-  );
-
   const payerCollateralTokenAccounts = await connection.getTokenAccountsByOwner(
     payer.publicKey,
     { mint: reserveParsed.info.collateral.mintPubkey }

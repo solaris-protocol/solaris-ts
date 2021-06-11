@@ -74,6 +74,6 @@ export async function depositObligationCollateralCommand(
     );
     console.log('Successfull obligation collateral deposit');
   } catch (e) {
-    console.log(`InitReserve Error: ${e}`);
+    console.log(`DepositObligationCollateral Error: ${e}`);
   }
 }

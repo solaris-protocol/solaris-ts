@@ -17,6 +17,7 @@ import {
   redeemReserveCollateralCommand,
   refreshObligationCommand,
   depositObligationCollateralCommand,
+  withdrawObligationCollateralCommand,
 } from './commands';
 
 import * as BufferLayout from 'buffer-layout';
@@ -172,23 +173,25 @@ async function run() {
   // );
 
   // init Obligation
-  // const lendingMarketPubkey = new PublicKey(
-  //   '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h'
-  // );
-  // const newObligation = await initObligationCommand(
-  //   connection,
-  //   lendingMarketPubkey,
-  //   payer
-  // );
-  //G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81
-  // console.log('###: newObligation', newObligation.toBase58());
+//   const lendingMarketPubkey = new PublicKey(
+//     '9cu7LXZYJ6oNNi7X4anv2LP8NP58h8zKiE61LMcgJt5h'
+//   );
+//   const newObligation = await initObligationCommand(
+//     connection,
+//     lendingMarketPubkey,
+//     payer
+//   );
+ //G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81
+//  12WgUmWjETjWptKePCTZeVg1PmhGc313UeD1vFbc4i96
+//   console.log('###: newObligation', newObligation.toBase58());
 
   //Refresh obligation
-  // const obligationPubkey = new PublicKey(
-  //   'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
-  // );
+//   const obligationPubkey = new PublicKey(
+//     '12WgUmWjETjWptKePCTZeVg1PmhGc313UeD1vFbc4i96'
+//   );
 
-  // await refreshObligationCommand(connection, obligationPubkey, payer);
+
+//   await refreshObligationCommand(connection, obligationPubkey, payer);
 
   //deposit obligation collateral
   const reservePubkey = new PublicKey(
@@ -203,10 +206,10 @@ async function run() {
 
   const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
 
-  const collateralAmount = 100;
+  const collateralAmount = 1000;
 
   const obligationPubkey = new PublicKey(
-    'G5Bk28JbUqYzBVNjP1qZkq4yLxfuREVzoWwBbTQ6qa81'
+    '12WgUmWjETjWptKePCTZeVg1PmhGc313UeD1vFbc4i96'
   );
 
   const payerCollateralTokenAccounts = await connection.getTokenAccountsByOwner(
@@ -222,17 +225,20 @@ async function run() {
         ) === 1
     )?.pubkey || payer.publicKey;
 
-  console.log(payerCollateralTokenAccountPubkey.toBase58());
 
-  await depositObligationCollateralCommand(
-    connection,
-    collateralAmount,
-    payerCollateralTokenAccountPubkey,
-    reservePubkey,
-    obligationPubkey,
-    userTransferAuthorityKeypair,
-    payer
-  );
+//   await depositObligationCollateralCommand(
+//     connection,
+//     collateralAmount,
+//     payerCollateralTokenAccountPubkey,
+//     reservePubkey,
+//     obligationPubkey,
+//     userTransferAuthorityKeypair,
+//     payer
+//   );
+	
+	// withdraw obligation collateral
+await withdrawObligationCollateralCommand(connection, collateralAmount-100, reservePubkey, obligationPubkey,  payerCollateralTokenAccountPubkey, payer);
+
 }
 
 run();

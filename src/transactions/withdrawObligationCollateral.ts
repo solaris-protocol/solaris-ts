@@ -17,11 +17,6 @@ export const withdrawObligationCollateralTransaction = (
 ): Transaction => {
   return new Transaction()
     .add(
-      ...obligationReservesAndOraclesPubkeys.map(item =>
-        refreshReserveInstruction(item.reservePubkey, item.oraclePubkey)
-      )
-    )
-    .add(
       refreshObligationInstruction(
         params.obligationPubkey,
         obligationReservesAndOraclesPubkeys.map(item => item.reservePubkey)

@@ -38,69 +38,74 @@ export async function withdrawObligationCollateralCommand(
     obligationAccountInfo
   );
 
-  const obligationReservesPubkeys = [
-    ...obligationParsed.info.deposits.map(deposit => deposit.depositReserve),
-    ...obligationParsed.info.borrows.map(borrow => borrow.borrowReserve),
-  ];
+  console.log(obligationParsed.info.borrows.length);
 
-  const obligationReservesAndOraclesPubkeys = await Promise.all(
-    obligationReservesPubkeys.map(async reservePubkey => {
-      const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
+//   const obligationReservesPubkeys = [
+//     ...obligationParsed.info.deposits.map(deposit => deposit.depositReserve),
+//     ...obligationParsed.info.borrows.map(borrow => borrow.borrowReserve),
+//   ];
 
-      if (reserveAccountInfo === null) {
-        throw 'Error: cannot find the reserve account';
-      }
+//   console.log(obligationReservesPubkeys)
 
-      const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
+//   const obligationReservesAndOraclesPubkeys = await Promise.all(
+//     obligationReservesPubkeys.map(async reservePubkey => {
+// 		console.log('reservePubkey', reservePubkey);
+//       const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
 
-      return {
-        reservePubkey: reservePubkey,
-        oraclePubkey: reserveParsed.info.liquidity.oraclePubkey,
-      };
-    })
-  );
+//       if (reserveAccountInfo === null) {
+//         throw 'Error: cannot find the reserve account';
+//       }
 
-  const sourceReserveCollateralPubkey =
-    reserveParsed.info.collateral.supplyPubkey;
-  const lendingMarketPubkey = reserveParsed.info.lendingMarket;
+//       const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
 
-  const [
-    lendingMarketDerivedAuthorityPubkey,
-    _bumpSeed,
-  ] = await PublicKey.findProgramAddress(
-    [lendingMarketPubkey.toBytes()],
-    LENDING_PROGRAM_ID
-  );
+//       return {
+//         reservePubkey: reservePubkey,
+//         oraclePubkey: reserveParsed.info.liquidity.oraclePubkey,
+//       };
+//     })
+//   );
 
-  const newWithdrawObligationCollateralParams: withdrawObligationCollateraParams = {
-    collateralAmount,
-    sourceReserveCollateralPubkey,
-    destinationCollateralPubkey,
-    reservePubkey,
-    obligationPubkey,
-    lendingMarketPubkey,
-    lendingMarketDerivedAuthorityPubkey,
-    obligationOwnerPubkey: payer.publicKey,
-  };
+//   const sourceReserveCollateralPubkey =
+//     reserveParsed.info.collateral.supplyPubkey;
+//   const lendingMarketPubkey = reserveParsed.info.lendingMarket;
 
-  //initReserve transaction
-  const newWithdrawObligationCollateralTransaction = withdrawObligationCollateralTransaction(
-    newWithdrawObligationCollateralParams,
-    obligationReservesAndOraclesPubkeys
-  );
+//   const [
+//     lendingMarketDerivedAuthorityPubkey,
+//     _bumpSeed,
+//   ] = await PublicKey.findProgramAddress(
+//     [lendingMarketPubkey.toBytes()],
+//     LENDING_PROGRAM_ID
+//   );
 
-  try {
-    await sendAndConfirmTransaction(
-      connection,
-      newWithdrawObligationCollateralTransaction,
-      [payer],
-      {
-        commitment: 'singleGossip',
-        preflightCommitment: 'singleGossip',
-      }
-    );
-    console.log('Successfull obligation collateral withdraw');
-  } catch (e) {
-    console.log(`InitReserve Error: ${e}`);
-  }
+//   const newWithdrawObligationCollateralParams: withdrawObligationCollateraParams = {
+//     collateralAmount,
+//     sourceReserveCollateralPubkey,
+//     destinationCollateralPubkey,
+//     reservePubkey,
+//     obligationPubkey,
+//     lendingMarketPubkey,
+//     lendingMarketDerivedAuthorityPubkey,
+//     obligationOwnerPubkey: payer.publicKey,
+//   };
+
+//   //initReserve transaction
+//   const newWithdrawObligationCollateralTransaction = withdrawObligationCollateralTransaction(
+//     newWithdrawObligationCollateralParams,
+//     obligationReservesAndOraclesPubkeys
+//   );
+
+//   try {
+//     await sendAndConfirmTransaction(
+//       connection,
+//       newWithdrawObligationCollateralTransaction,
+//       [payer],
+//       {
+//         commitment: 'singleGossip',
+//         preflightCommitment: 'singleGossip',
+//       }
+//     );
+//     console.log('Successfull obligation collateral withdraw');
+//   } catch (e) {
+//     console.log(`InitReserve Error: ${e}`);
+//   }
 }

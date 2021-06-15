@@ -5,23 +5,24 @@ import {
   sendAndConfirmTransaction,
 } from '@solana/web3.js';
 
-import { LENDING_PROGRAM_ID } from '../constants';
 import {
-  withdrawObligationCollateralParams,
-  ObligationParser,
+  repayObligationLiquidityParams,
   ReserveParser,
+  ObligationParser,
 } from '../models';
-import { withdrawObligationCollateralTransaction } from '../transactions';
+import { repayObligationLiquidityTransaction } from '../transactions';
 
-export async function withdrawObligationCollateralCommand(
+export async function repayObligationLiquidityCommand(
   connection: Connection,
-  collateralAmount: number,
+  liquidityAmount: number,
+  sourceLiquidityPubkey: PublicKey,
   reservePubkey: PublicKey,
   obligationPubkey: PublicKey,
-  destinationCollateralPubkey: PublicKey,
+  userTransferAuthorityKeypair: Keypair,
   payer: Keypair
 ): Promise<void> {
   const reserveAccountInfo = await connection.getAccountInfo(reservePubkey);
+
   const obligationAccountInfo = await connection.getAccountInfo(
     obligationPubkey
   );
@@ -35,6 +36,13 @@ export async function withdrawObligationCollateralCommand(
   }
 
   const reserveParsed = ReserveParser(reservePubkey, reserveAccountInfo);
+
+  const reserveLiquiditySupplyPubkey =
+    reserveParsed.info.liquidity.supplyPubkey;
+  const reserveCollateralMintPubkey = reserveParsed.info.collateral.mintPubkey;
+  const lendingMarketPubkey = reserveParsed.info.lendingMarket;
+  const pythPricePubkey = reserveParsed.info.liquidity.oraclePubkey;
+
   const obligationParsed = ObligationParser(
     obligationPubkey,
     obligationAccountInfo
@@ -62,47 +70,37 @@ export async function withdrawObligationCollateralCommand(
     })
   );
 
-  const sourceReserveCollateralPubkey =
-    reserveParsed.info.collateral.supplyPubkey;
-  const lendingMarketPubkey = reserveParsed.info.lendingMarket;
+  const userTransferAuthorityPubkey = userTransferAuthorityKeypair.publicKey;
 
-  const [
-    lendingMarketDerivedAuthorityPubkey,
-    _bumpSeed,
-  ] = await PublicKey.findProgramAddress(
-    [lendingMarketPubkey.toBytes()],
-    LENDING_PROGRAM_ID
-  );
-
-  const newWithdrawObligationCollateralParams: withdrawObligationCollateralParams = {
-    collateralAmount,
-    sourceReserveCollateralPubkey,
-    destinationCollateralPubkey,
+  const newRepayObligationLiquidityParams: repayObligationLiquidityParams = {
+    liquidityAmount,
+    sourceLiquidityPubkey,
+    reserveLiquiditySupplyPubkey,
     reservePubkey,
     obligationPubkey,
     lendingMarketPubkey,
-    lendingMarketDerivedAuthorityPubkey,
-    obligationOwnerPubkey: payer.publicKey,
+    userTransferAuthorityPubkey,
   };
 
-  //withdraw obligation collateral transaction
-  const newWithdrawObligationCollateralTransaction = withdrawObligationCollateralTransaction(
-    newWithdrawObligationCollateralParams,
-    obligationReservesAndOraclesPubkeys
+  //initReserve transaction
+  const newRepayObligationTransaction = repayObligationLiquidityTransaction(
+    newRepayObligationLiquidityParams,
+    obligationReservesAndOraclesPubkeys,
+    payer.publicKey
   );
 
   try {
     await sendAndConfirmTransaction(
       connection,
-      newWithdrawObligationCollateralTransaction,
-      [payer],
+      newRepayObligationTransaction,
+      [payer, userTransferAuthorityKeypair],
       {
         commitment: 'singleGossip',
         preflightCommitment: 'singleGossip',
       }
     );
-    console.log('Successfull obligation collateral withdraw');
+    console.log('Successfull repay obligation liquidity');
   } catch (e) {
-    console.log(`InitReserve Error: ${e}`);
+    console.log(`RepayObligationLiquidity Error: ${e}`);
   }
 }

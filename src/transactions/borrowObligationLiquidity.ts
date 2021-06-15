@@ -1,17 +1,20 @@
-import { Transaction, TransactionInstruction } from '@solana/web3.js';
-
 import {
-  withdrawObligationCollateralInstruction,
+  Transaction,
+  PublicKey,
+  TransactionInstruction,
+} from '@solana/web3.js';
+import {
+  borrowObligationLiquidityInstruction,
   refreshReserveInstruction,
   refreshObligationInstruction,
 } from '../instructions';
 import {
-  withdrawObligationCollateralParams,
+  borrowObligationLiquidityParams,
   ReserveAndOraclePubkeys,
 } from '../models';
 
-export const withdrawObligationCollateralTransaction = (
-  params: withdrawObligationCollateralParams,
+export const borrowObligationLiquidityTransaction = (
+  params: borrowObligationLiquidityParams,
   obligationReservesAndOraclesPubkeys: Array<ReserveAndOraclePubkeys>
 ): Transaction => {
   const reserveRefreshInstructions: Array<TransactionInstruction> = obligationReservesAndOraclesPubkeys.map(
@@ -30,5 +33,5 @@ export const withdrawObligationCollateralTransaction = (
         obligationReservesAndOraclesPubkeys.map(item => item.reservePubkey)
       )
     )
-    .add(withdrawObligationCollateralInstruction(params));
+    .add(borrowObligationLiquidityInstruction(params));
 };

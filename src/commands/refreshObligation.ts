@@ -26,8 +26,6 @@ export async function refreshObligationCommand(
     obligationAccountInfo
   );
 
-  console.log(obligationParsed.info);
-
   const depositsReserves = obligationParsed.info.deposits;
   const borrowsReserves = obligationParsed.info.borrows;
 

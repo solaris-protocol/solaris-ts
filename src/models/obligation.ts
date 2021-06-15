@@ -91,7 +91,7 @@ export interface depositObligatonCollateralParams {
   pythPricePubkey: PublicKey;
 }
 
-export interface withdrawObligationCollateraParams {
+export interface withdrawObligationCollateralParams {
   collateralAmount: number;
   sourceReserveCollateralPubkey: PublicKey;
   destinationCollateralPubkey: PublicKey;
@@ -100,6 +100,28 @@ export interface withdrawObligationCollateraParams {
   lendingMarketPubkey: PublicKey;
   lendingMarketDerivedAuthorityPubkey: PublicKey;
   obligationOwnerPubkey: PublicKey;
+}
+
+export interface borrowObligationLiquidityParams {
+	liquidityAmount: number;
+	borrowReserveLiquiditySupplyPubkey: PublicKey;
+  destinationLiquidityPubkey: PublicKey;
+  borrowReservePubkey: PublicKey;
+  borrowReserveLiquidityFeeReceiverPubkey: PublicKey;
+  obligationPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  lendingMarketDerivedAuthorityPubkey: PublicKey;
+  obligationOwnerPubkey: PublicKey;
+}
+
+export interface repayObligationLiquidityParams {
+  liquidityAmount: number;
+  sourceLiquidityPubkey: PublicKey;
+  reserveLiquiditySupplyPubkey: PublicKey;
+  reservePubkey: PublicKey;
+  obligationPubkey: PublicKey;
+  lendingMarketPubkey: PublicKey;
+  userTransferAuthorityPubkey: PublicKey;
 }
 
 export const MAX_OBLIGATION_RESERVES = 10;

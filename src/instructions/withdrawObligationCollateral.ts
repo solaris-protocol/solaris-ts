@@ -6,7 +6,7 @@ import {
 import BN from 'bn.js';
 import * as BufferLayout from 'buffer-layout';
 import * as Layout from '../utils/layouts';
-import { withdrawObligationCollateraParams } from '../models';
+import { withdrawObligationCollateralParams } from '../models';
 import { LENDING_PROGRAM_ID, TOKEN_PROGRAM_ID } from '../constants';
 import { LendingInstructions } from './lendingInstructions';
 
@@ -26,7 +26,7 @@ import { LendingInstructions } from './lendingInstructions';
 ///   7. `[]` Clock sysvar.
 ///   8. `[]` Token program id.
 export const withdrawObligationCollateralInstruction = (
-  params: withdrawObligationCollateraParams
+  params: withdrawObligationCollateralParams
 ): TransactionInstruction => {
   const dataLayout = BufferLayout.struct([
     BufferLayout.u8('instruction'),

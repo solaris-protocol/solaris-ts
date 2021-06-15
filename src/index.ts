@@ -18,6 +18,8 @@ import {
   refreshObligationCommand,
   depositObligationCollateralCommand,
   withdrawObligationCollateralCommand,
+  borrowObligationLiquidityCommand,
+  repayObligationLiquidityCommand,
 } from './commands';
 
 import * as BufferLayout from 'buffer-layout';
@@ -235,12 +237,45 @@ async function run() {
   // );
 
   // withdraw obligation collateral
-  await withdrawObligationCollateralCommand(
+  // await withdrawObligationCollateralCommand(
+  //   connection,
+  //   collateralAmount,
+  //   reservePubkey,
+  //   obligationPubkey,
+  //   payerCollateralTokenAccountPubkey,
+  //   payer
+  // );
+
+  // borrow obligation liquidity
+  const liquidityAmount = 100;
+  const depositAmount = 100;
+
+  const destinationLiquidityPubkey = await Token.createWrappedNativeAccount(
     connection,
-    collateralAmount,
+    TOKEN_PROGRAM_ID,
+    payer.publicKey,
+    payer,
+    depositAmount
+  );
+
+  await borrowObligationLiquidityCommand(
+    connection,
+    liquidityAmount,
+    destinationLiquidityPubkey,
     reservePubkey,
     obligationPubkey,
-    payerCollateralTokenAccountPubkey,
+    payer
+  );
+
+  //repay obligation liquidity
+
+  await repayObligationLiquidityCommand(
+    connection,
+    liquidityAmount,
+    destinationLiquidityPubkey,
+    reservePubkey,
+    obligationPubkey,
+    userTransferAuthorityKeypair,
     payer
   );
 }

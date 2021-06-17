@@ -22,8 +22,8 @@ export const redeemReserveCollateralTransaction = (
         params.collateralAmount
       )
     )
+    .add(redeemReserveCollateralInstruction(params))
     .add(
       refreshReserveInstruction(params.reservePubkey, params.pythPricePubkey)
-    )
-    .add(redeemReserveCollateralInstruction(params));
+    );
 };

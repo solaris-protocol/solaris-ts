@@ -1,7 +1,10 @@
 import { Transaction, PublicKey } from '@solana/web3.js';
 import { Token } from '@solana/spl-token';
 import { TOKEN_PROGRAM_ID } from '../constants';
-import { depositReserveLiquidityInstruction, refreshReserveInstruction } from '../instructions';
+import {
+  depositReserveLiquidityInstruction,
+  refreshReserveInstruction,
+} from '../instructions';
 import { depositReserveLiquidityParams } from '../models/reserve';
 
 export const depositReserveLiquidityTransaction = (
@@ -19,6 +22,8 @@ export const depositReserveLiquidityTransaction = (
         params.liquidityAmount
       )
     )
-    .add(refreshReserveInstruction(params.reservePubkey, params.pythPricePubkey))
+    .add(
+      refreshReserveInstruction(params.reservePubkey, params.pythPricePubkey)
+    )
     .add(depositReserveLiquidityInstruction(params));
 };
